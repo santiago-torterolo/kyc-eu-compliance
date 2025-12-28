@@ -70,9 +70,10 @@ async def extract_document(
     """Extracts data from document and runs compliance checks."""
     
     # Validate file extension
-    filename = document_image.filename or ""
+    filename = document_image.filename or "document.jpg"
+    print(f"DEBUG: Received file with filename: '{filename}'")
     if "." not in filename:
-        raise HTTPException(status_code=400, detail="Invalid file name")
+        filename += ".jpg"  # Fallback extension
     
     ext = filename.rsplit(".", 1)[1].lower()
     if ext not in settings.allowed_extensions:
@@ -148,8 +149,9 @@ async def verify_face(
     if document_id not in document_store:
         raise HTTPException(status_code=400, detail="Invalid document_id")
     
-    # Read selfie image
-    selfie_bytes = await selfie.read()
+    # Validate file extension
+    filename = selfie.filename or "selfie.jpg"
+    print(f"DEBUG: Received selfie with filename: '{filename}'")
     selfie_img = Image.open(io.BytesIO(selfie_bytes)).convert("RGB")
     
     # Liveness detection

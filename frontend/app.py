@@ -49,7 +49,7 @@ with col2:
         if uploaded_file and st.button("Analyze Document", type="primary"):
             with st.spinner("Extracting data via OCR..."):
                 try:
-                    files = {"document_image": uploaded_file.getvalue()}
+                    files = {"document_image": (uploaded_file.name, uploaded_file.getvalue(), uploaded_file.type)}
                     data = {"document_type": doc_type}
                     res = requests.post(f"{API_URL}/v1/extract-document", files=files, data=data)
                     
@@ -81,11 +81,15 @@ with col2:
             with st.spinner("Checking liveness and face match..."):
                 try:
                     if option == "Webcam":
-                        bytes_data = selfie_file.getvalue()
+                        filename = "selfie.jpg"
+                        content = selfie_file.getvalue()
+                        mimetype = "image/jpeg"
                     else:
-                        bytes_data = selfie_file.read()
+                        filename = selfie_file.name
+                        content = selfie_file.read()
+                        mimetype = selfie_file.type
 
-                    files = {"selfie": bytes_data}
+                    files = {"selfie": (filename, content, mimetype)}
                     data = {"document_id": st.session_state.verification_id}
                     
                     res = requests.post(f"{API_URL}/v1/verify-face", files=files, data=data)

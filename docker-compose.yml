@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   backend:
     build: 
@@ -10,6 +9,8 @@ services:
     volumes:
       - ./backend/app:/app/backend/app
     env_file: .env
+    networks:
+      - kyc-network
 
   frontend:
     build:
@@ -22,3 +23,9 @@ services:
       - API_URL=http://backend:8000/api
     depends_on:
       - backend
+    networks:
+      - kyc-network
+
+networks:
+  kyc-network:
+    driver: bridge
