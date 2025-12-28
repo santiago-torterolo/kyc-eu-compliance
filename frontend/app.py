@@ -7,8 +7,9 @@ import requests
 import json
 import time
 
-# Config - FIXED for localhost
-API_URL = "http://localhost:8000/api"
+# Config - Loading from environment for Docker compatibility
+import os
+API_URL = os.getenv("API_URL", "http://localhost:8000/api")
 
 st.set_page_config(page_title="KYC EU Compliance", page_icon="🔐", layout="wide")
 
@@ -104,8 +105,7 @@ with col2:
         with st.spinner("Calculating Risk Score & Compliance checks..."):
             time.sleep(1)
             try:
-                res = requests.post(f"{API_URL}/v1/risk-assessment", 
-                                  json={"document_id": st.session_state.verification_id})
+                res = requests.post(f"{API_URL}/v1/risk-assessment?document_id={st.session_state.verification_id}")
                 if res.status_code == 200:
                     st.session_state.risk_data = res.json()
                     st.session_state.step = 4
